@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectManagement.Data.Interfaces;
 using ProjectManagement.Entities;
-using System;
 
 namespace ProjectManagement.Api.Controllers
 {
@@ -32,7 +31,7 @@ namespace ProjectManagement.Api.Controllers
         }
 
         [HttpPost()]
-        public IActionResult Post(T entity)
+        public IActionResult Post([FromBody] T entity)
         {
             _repository.Add(entity);
             return NoContent();

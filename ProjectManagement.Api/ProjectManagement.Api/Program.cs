@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using ProjectManagement.Shared;
 
 namespace ProjectManagement.Api
 {
@@ -13,7 +11,14 @@ namespace ProjectManagement.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<PMContext>();
+                DataSeeder.Initialize(services);
+            }
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -22,5 +27,17 @@ namespace ProjectManagement.Api
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        internal class DataSeeder
+        {
+            public static void Initialize(IServiceProvider serviceProvider)
+            {
+                var contextOptions = serviceProvider.GetRequiredService<DbContextOptions<PMContext>>();
+                var context = new PMContext(contextOptions);
+                DataService.SeedData(context);
+            }
+        }
     }
+
+    
 }

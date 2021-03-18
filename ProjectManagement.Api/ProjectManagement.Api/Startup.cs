@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectManagement.Data.Implementation;
 using ProjectManagement.Data.Interfaces;
 using ProjectManagement.Entities;
+using ProjectManagement.Shared;
 
 namespace ProjectManagement.Api
 {
@@ -25,6 +27,7 @@ namespace ProjectManagement.Api
             services.AddScoped<IBaseRepository<User>, BaseRepository<User>>();
             services.AddScoped<IBaseRepository<Task>, BaseRepository<Task>>();
             services.AddScoped<IBaseRepository<Project>, BaseRepository<Project>>();
+            services.AddDbContext<PMContext>(options => options.UseInMemoryDatabase("ProjectManagementDb"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +47,7 @@ namespace ProjectManagement.Api
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
